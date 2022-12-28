@@ -23,12 +23,12 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const MoveScore&);
 
 	// Override comparison operators
-	constexpr bool operator== (const MoveScore& other) const { return m_score == other.m_score; }
-	constexpr bool operator!= (const MoveScore& other) const { return m_score != other.m_score; }
-	constexpr bool operator<  (const MoveScore& other) const { return m_score <  other.m_score; }
-	constexpr bool operator>  (const MoveScore& other) const { return m_score >  other.m_score; }
-	constexpr bool operator<= (const MoveScore& other) const { return m_score <= other.m_score; }
-	constexpr bool operator>= (const MoveScore& other) const { return m_score >= other.m_score; }
+	inline bool operator== (const MoveScore& other) const { return m_score == other.m_score; }
+	inline bool operator!= (const MoveScore& other) const { return m_score != other.m_score; }
+	inline bool operator<  (const MoveScore& other) const { return m_score <  other.m_score; }
+	inline bool operator>  (const MoveScore& other) const { return m_score >  other.m_score; }
+	inline bool operator<= (const MoveScore& other) const { return m_score <= other.m_score; }
+	inline bool operator>= (const MoveScore& other) const { return m_score >= other.m_score; }
 
 	Vec2 m_move;
 	float m_score;
