@@ -21,17 +21,17 @@ public:
 	}
 
 	// Overload operator []
-	constexpr int& operator[](int i)
+	inline int& operator[](int i)
 	{
 		return data[i];
 	}
 
-	constexpr const int& operator[](int i) const
+	inline const int& operator[](int i) const
 	{
 		return data[i];
 	}
 
-	constexpr void fill(const int n)
+	inline void fill(const int n)
 	{
 		data[0] = data[1] = n;
 	}
@@ -69,23 +69,23 @@ public:
 	}
 
 	// Overload operator []
-	constexpr int& operator[](int i)
+	inline int& operator[](int i)
 	{
 		return data[i];
 	}
 
-	constexpr const int& operator[](int i) const
+	inline const int& operator[](int i) const
 	{
 		return data[i];
 	}
 
-	constexpr void fill(const int n)
+	inline void fill(const int n)
 	{
 		data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = data[7] = data[8] = n;
 	}
 
 	// Check if there is a tris
-	constexpr int tris() const
+	inline int tris() const
 	{
 		// Return 1 or 2 if there is a tris on board (win)
 		if ((data[4] == 1 || data[4] == 2) &&
@@ -114,7 +114,7 @@ public:
 	}
 
 	// Check if a not ended game can only end in a draw or can still be won
-	constexpr bool forcedDraw() const
+	inline bool forcedDraw() const
 	{
 		if ((data[0] < 2 && data[1] < 2 && data[2] < 2) ||
 			(data[0] % 2 == 0 && data[1] % 2 == 0 && data[2] % 2 == 0) ||
