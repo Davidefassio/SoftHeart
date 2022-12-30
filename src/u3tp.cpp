@@ -7,7 +7,6 @@
 
 namespace
 {
-
     enum State { BEGIN, HANDSHAKE, IDLE, GAME, ANALYZE, END };        
 
     std::string enumToString(State state)
@@ -29,6 +28,11 @@ namespace
             default:
                 return "";
         }
+    }
+
+    void help()
+    {
+        // TODO
     }
 }
 
@@ -52,23 +56,15 @@ void sh::U3tp::loop()
 
         // Tokenize
         std::vector<std::string> tokens(std::sregex_token_iterator(input.begin(), input.end(), ws_re, -1), std::sregex_token_iterator());
-        
-        if(tokens.size() < 1)
+        std::size_t i;
+        for(i = 1; i < tokens.size(); i += 2)
         {
-            continue;
+            if(tokens[i][0] == '-')
+                params[tokens[i].substr(1)] = tokens[i+1];
+            else
+                data = tokens[i];
         }
-        else
-        {  
-            std::size_t i;
-            for(i = 1; i < tokens.size(); i += 2)
-            {
-                if(tokens[i][0] == '-')
-                    params[tokens[i]] = tokens[i+1];
-                else
-                    data = tokens[i];
-            }
-            stateMachine(tokens[0], params, data);
-        }
+        stateMachine(tokens[0], params, data);
     }
 
     return;
@@ -111,7 +107,8 @@ bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map
             }
             if(command == "help")
             {
-                
+                help();
+                return true;
             }
             if(command == "state_game")
             {
