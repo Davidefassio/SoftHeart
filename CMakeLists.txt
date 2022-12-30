@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(SoftHeart 
-    example/UltimateTTT.cpp
-    example/Game.cpp
+    src/main.cpp
+    src/u3tp.cpp
     src/Board.cpp
     src/Engine.cpp)
