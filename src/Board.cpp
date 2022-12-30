@@ -62,6 +62,8 @@ bool Board::set(const std::string& state)
 	// Compute the bigBoard from the smallBoards position
 	for (int i = 0; i < 9; ++i)
 		m_bigBoard = m_smallBoards[i].tris();
+		
+	return true;
 }
 
 void Board::reset()
