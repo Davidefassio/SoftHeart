@@ -7,9 +7,11 @@
 
 namespace
 {
-    enum State { BEGIN, HANDSHAKE, IDLE, GAME, ANALYZE, END };        
+    const std::regex ws_re("\\s+"); // whitespace
 
-    std::string enumToString(State state)
+    enum State { BEGIN = 0, HANDSHAKE, IDLE, GAME, ANALYZE, END };        
+
+    std::string enumToString(int state)
     {
         switch(state)
         {
@@ -32,7 +34,7 @@ namespace
 
     void help()
     {
-        // TODO
+        std::cout << "Print helpful message" << std::endl;
     }
 }
 
@@ -42,8 +44,6 @@ void sh::U3tp::loop()
     std::string input, data;
     std::unordered_map<std::string, std::string> params;
     std::size_t pos;
-
-    const std::regex ws_re("\\s+"); // whitespace
 
     while(m_alive)
     {
@@ -56,14 +56,39 @@ void sh::U3tp::loop()
 
         // Tokenize
         std::vector<std::string> tokens(std::sregex_token_iterator(input.begin(), input.end(), ws_re, -1), std::sregex_token_iterator());
-        std::size_t i;
-        for(i = 1; i < tokens.size(); i += 2)
+        
+        // Fill containers
+        for(std::size_t i = 1; i < tokens.size();)
         {
-            if(tokens[i][0] == '-')
+            if(tokens[i][0] == '-' && data.size() == 0)
+            {
                 params[tokens[i].substr(1)] = tokens[i+1];
+                i += 2;
+            }
             else
-                data = tokens[i];
+            {
+                if(data.size() != 0)
+                    data.push_back(' ');
+                data.append(tokens[i++]);
+            }
         }
+
+        /*
+        // DEBUG ///
+        // tokens
+        for(auto s : tokens)
+            std::cout << "'" << s << "'" << std::endl;
+        // comm
+        std::cout << "comm: '" << tokens[0] << "'" << std::endl;
+        // param
+        std::cout << "param:" << std::endl;
+        for(auto [key, value]: params)
+            std::cout << "'" << key << "': '" << value << "'" << std::endl;
+        // data
+        std::cout << "data: '" << data << "'" << std::endl;
+        ////////////
+        */
+
         stateMachine(tokens[0], params, data);
     }
 
@@ -72,18 +97,18 @@ void sh::U3tp::loop()
 
 // Check if the command is compatible with the current state.
 // If it is compatible then execute it.
-bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map<std::string, std::string>& params, const std::string& data)
+void sh::U3tp::stateMachine(const std::string& command, const std::unordered_map<std::string, std::string>& params, const std::string& data)
 {
     if(command == "stop")
     {
         m_alive = false;
-        return true;
+        return;
     }
 
     if(command == "state")
     {
-        std::cout << enumToString((State) m_currState) << std::endl;
-        return true;
+        std::cout << enumToString(m_currState) << std::endl;
+        return;
     }
 
     switch(m_currState)
@@ -93,7 +118,7 @@ bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map
             {
                 std::cout << "u3tpok" << std::endl;
                 m_currState = IDLE;
-                return true;
+                return;
             }
             break;
 
@@ -108,17 +133,17 @@ bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map
             if(command == "help")
             {
                 help();
-                return true;
+                return;
             }
             if(command == "state_game")
             {
                 m_currState = GAME;
-                return true;
+                return;
             }
             if(command == "state_analyze")
             {
                 m_currState = ANALYZE;
-                return true;
+                return;
             }
             break;
 
@@ -134,7 +159,7 @@ bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map
             if(command == "quit_state")
             {
                 m_currState = IDLE;
-                return true;
+                return;
             }
             break;
 
@@ -150,7 +175,7 @@ bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map
             if(command == "quit_state")
             {
                 m_currState = IDLE;
-                return true;
+                return;
             }
             break;
 
@@ -161,5 +186,5 @@ bool sh::U3tp::stateMachine(const std::string& command, const std::unordered_map
             break;
     }
 
-    return false;
+    return;
 }

@@ -39,17 +39,18 @@ class Engine
 public:
 	Engine();
 
+	void setBoard(Board);
+
 	MoveScore analyzePosition(
-		const Board&, 
 		std::chrono::duration<double> = std::chrono::seconds(5), 
 		int = 500);
-
-	void generateMoves(const Board&, Vec2*, int*);
 
 private:
 	std::ranlux48_base m_gen;
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
+	Board m_currPosition;
 
+	void generateMoves(const Board&, Vec2*, int*);
 	int playRandom(Board&, Vec2*);
 
 	// Pick a random int in the range [0, size).

@@ -12,46 +12,29 @@ Engine::Engine()
 	m_gen.seed(std::random_device{}());
 }
 
-// Generate all possible moves from a position.
-// The moves are stored in Vec2* moves.
-// The number of moves generated is stored in int* cnt.
-void Engine::generateMoves(const Board& board, Vec2* moves, int* cnt)
+void Engine::setBoard(const Board newBoard)
 {
-	*cnt = 0;
-
-	if (board.m_lastMoveSC != -1)
-	{
-		for (int i = 0; i < 9; ++i)
-			if (board.m_smallBoards[board.m_lastMoveSC][i] == 0)
-				moves[(*cnt)++] = Vec2(board.m_lastMoveSC, i);
-	}
-	else
-	{
-		for (int i = 0; i < 9; ++i)
-			if (board.m_bigBoard[i] == 0)
-				for (int j = 0; j < 9; ++j)
-					if (board.m_smallBoards[i][j] == 0)
-						moves[(*cnt)++] = Vec2(i, j);
-	}
+	m_currPosition = newBoard;
 }
+
 
 // Analyze a position and return the best move.
 // It tries to return in totTime. default = 2s.
 // If totTime is <1s it is suggested to reduce sampleRuns to 200 or less.
-MoveScore Engine::analyzePosition(const Board& b, std::chrono::duration<double> totTime, int sampleRuns)
+MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sampleRuns)
 {
 	std::int64_t count = 0;
 	float score;
-	int mask = (b.m_crossToMove) ? 1 : -1;
+	int mask = (m_currPosition.m_crossToMove) ? 1 : -1;
 
 	Vec2 moves[81], buffer[81];
 	int moves_size;
-	generateMoves(b, moves, &moves_size);
+	generateMoves(m_currPosition, moves, &moves_size);
 
 	MoveScore bestMS(Vec2(), std::numeric_limits<float>::lowest());
 
 	// moves[0] + testTime
-	Board moved(b);
+	Board moved(m_currPosition);
 	moved.makeMoveUnsafe(moves[0]);
 
 	auto start = std::chrono::steady_clock::now();
@@ -93,7 +76,7 @@ MoveScore Engine::analyzePosition(const Board& b, std::chrono::duration<double> 
 	{
 		count = 0;
 
-		Board moved(b);
+		Board moved(m_currPosition);
 		moved.makeMoveUnsafe(moves[m]);
 
 		for (std::uint64_t i = 0; i < playsPerMove; ++i)
@@ -117,6 +100,29 @@ MoveScore Engine::analyzePosition(const Board& b, std::chrono::duration<double> 
 
 	bestMS.m_score *= mask;
 	return bestMS;
+}
+
+// Generate all possible moves from a position.
+// The moves are stored in Vec2* moves.
+// The number of moves generated is stored in int* cnt.
+void Engine::generateMoves(const Board& board, Vec2* moves, int* cnt)
+{
+	*cnt = 0;
+
+	if (board.m_lastMoveSC != -1)
+	{
+		for (int i = 0; i < 9; ++i)
+			if (board.m_smallBoards[board.m_lastMoveSC][i] == 0)
+				moves[(*cnt)++] = Vec2(board.m_lastMoveSC, i);
+	}
+	else
+	{
+		for (int i = 0; i < 9; ++i)
+			if (board.m_bigBoard[i] == 0)
+				for (int j = 0; j < 9; ++j)
+					if (board.m_smallBoards[i][j] == 0)
+						moves[(*cnt)++] = Vec2(i, j);
+	}
 }
 
 // Play a position randomly till the end and return the outcome.
