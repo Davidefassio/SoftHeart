@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Board.hpp"
+#include "Engine.hpp"
+
 #include <string>
 #include <unordered_map>
 
@@ -12,9 +15,10 @@ namespace sh
 
         void loop();
     private:
-        bool stateMachine(const std::string&, const std::unordered_map<std::string, std::string>&, const std::string&);
+        void stateMachine(const std::string&, const std::unordered_map<std::string, std::string>&, const std::string&);
 
-        int m_currState;
+        Engine engine;
+        int m_currState = 0;
         bool m_alive = true;
     };
 }
