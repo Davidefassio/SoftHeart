@@ -46,9 +46,9 @@ public:
 		int = 500);
 
 private:
+	Board m_currPosition;
 	std::ranlux48_base m_gen;
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
-	Board m_currPosition;
 
 	void generateMoves(const Board&, Vec2*, int*);
 	int playRandom(Board&, Vec2*);
