@@ -15,6 +15,6 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(SoftHeart 
     src/main.cpp
-    src/u3tp.cpp
+    src/u3tp-simple.cpp
     src/Board.cpp
     src/Engine.cpp)
