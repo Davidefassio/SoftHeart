@@ -8,9 +8,6 @@
 #include <string>
 #include <regex>
 #include <chrono>
-#include <cctype>
-
-#define ISDIGIT(x) ((x) >= '0' && (x) <= '9')
 
 namespace
 {
