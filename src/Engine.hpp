@@ -39,7 +39,6 @@ class Engine
 public:
 	Engine();
 
-	void clear();
 	void setBoard(const Board&);
 	bool makeMove(const Vec2);
 
