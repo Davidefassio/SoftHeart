@@ -42,22 +42,22 @@ namespace
         if (param != "-time")
             return;
 
+        std::size_t pos;
+        int num, mult;
+
         if (pvalue == "move")
         {
-            std::size_t pos;
-            const int i = std::stoi(format, &pos);
-            const int m = getMultiple(format, pos);
-
-            if (m == 0)
+            num = std::stoi(format, &pos);
+            
+            if (!(mult = getMultiple(format, pos)))
                 return;
 
-            moveTime = std::chrono::milliseconds(i * m);
+            moveTime = std::chrono::milliseconds(num * mult);
         }
         else if (pvalue == "total")
         {
-            std::size_t pos;
             std::vector<std::string> tokens;
-            int oldPos = 0, num, mult;
+            int oldPos = 0;
 
             for (int i = 0; i < format.size(); ++i)
             {
@@ -69,7 +69,7 @@ namespace
             }
             tokens.push_back(std::string(format, oldPos, format.size() - oldPos));
 
-            moveTime = std::chrono::milliseconds(0);
+            auto newMoveTime = std::chrono::milliseconds(0);
 
             for (int i = 0; i < tokens.size(); ++i)
             {
@@ -81,18 +81,17 @@ namespace
                 }
                    
                 num = std::stoi(tokens[i], &pos);
-                mult = getMultiple(tokens[i], pos);
 
-                if (mult == 0)
+                if (!(mult = getMultiple(tokens[i], pos)))
                     return;
 
                 if (incdel)
-                    moveTime += std::chrono::milliseconds(num * mult);
+                    newMoveTime += std::chrono::milliseconds(num * mult);
                 else
-                    moveTime += std::chrono::milliseconds((int) num * mult / 41);
+                    newMoveTime += std::chrono::milliseconds((int) num * mult / 41);
             }
 
-            std::cout << moveTime << std::endl;
+            moveTime = newMoveTime;
         }
     }
 
