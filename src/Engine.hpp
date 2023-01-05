@@ -39,7 +39,9 @@ class Engine
 public:
 	Engine();
 
-	void setBoard(Board);
+	void clear();
+	void setBoard(const Board&);
+	bool makeMove(const Vec2);
 
 	MoveScore analyzePosition(
 		std::chrono::duration<double> = std::chrono::seconds(5), 
