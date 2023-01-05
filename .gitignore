@@ -33,6 +33,8 @@
 
 # VSCode settings
 .vscode/*
+/.vs
 
 # build folder
 build/*
+/out/build/x64-Debug
