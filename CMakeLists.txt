@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # specify compiler flags
 set(CMAKE_CXX_FLAGS "-O3")
 
-# add the executable
+# add headers and executable
 include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(SoftHeart 
