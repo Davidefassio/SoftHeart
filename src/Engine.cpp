@@ -52,7 +52,7 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 	auto diff = std::chrono::steady_clock::now() - start;
 
 	std::uint64_t playsPerMove = (sampleRuns * totTime) / (diff * moves_size);
-	
+
 #ifdef DEBUG_ENG
 	std::cout << "Plays per move = " << playsPerMove << "\n";
 #endif
@@ -159,6 +159,6 @@ int Engine::playRandom(Board& b, Vec2* moves)
 // Override stream extraction operator
 std::ostream& operator<<(std::ostream& os, const MoveScore& ms)
 {
-	os << "(" << ms.m_move.data[0] + 1 << ", " << ms.m_move.data[1] + 1 << "): " << ms.m_score;
+	os << ms.m_move.data[0] + 1 << ms.m_move.data[1] + 1 << " " << ms.m_score;
 	return os;
 }

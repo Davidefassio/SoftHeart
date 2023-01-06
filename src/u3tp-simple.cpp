@@ -90,7 +90,7 @@ namespace
                 else
                     newMoveTime += std::chrono::milliseconds((int) num * mult / 41);
             }
-
+            
             moveTime = newMoveTime;
         }
     }
@@ -119,8 +119,7 @@ namespace
 
     void go()
     {
-        MoveScore best = engine.analyzePosition(moveTime);
-        std::cout << "Best move: " << best << std::endl;
+        std::cout << engine.analyzePosition(moveTime) << std::endl;
     }
 }
 
