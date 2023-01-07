@@ -17,6 +17,7 @@ namespace
     bool beforeHandshake = true;
     std::chrono::duration<double> moveTime = std::chrono::seconds(5);
 
+    /*
     int getMultiple(const std::string& str, std::size_t pos)
     {
         if (str.size() == pos + 1)
@@ -36,6 +37,27 @@ namespace
 
         return 0;
     }
+    */
+
+    double getMultiple(const std::string& str, std::size_t pos)
+    {
+        if (str.size() == pos + 1)
+        {
+            if (str[pos] == 's')
+                return 1.0;
+            if (str[pos] == 'm')
+                return 60.0;
+            if (str[pos] == 'h')
+                return 3600.0;
+            if (str[pos] == 'd')
+                return 86400.0;
+        }
+
+        if (str.size() == pos + 2 && str[pos] == 'm' && str[pos + 1] == 's')
+            return 0.001;
+
+        return 0.0;
+    }
     
     void setconstraint(const std::string& param, const std::string& pvalue, const std::string& format)
     {
@@ -43,7 +65,8 @@ namespace
             return;
 
         std::size_t pos;
-        int num, mult;
+        int num;
+        double mult;
 
         if (pvalue == "move")
         {
@@ -52,7 +75,7 @@ namespace
             if (!(mult = getMultiple(format, pos)))
                 return;
 
-            moveTime = std::chrono::milliseconds(num * mult);
+            moveTime = std::chrono::duration<double>(num * mult);
         }
         else if (pvalue == "total")
         {
@@ -69,15 +92,15 @@ namespace
             }
             tokens.push_back(std::string(format, oldPos, format.size() - oldPos));
 
-            auto newMoveTime = std::chrono::milliseconds(0);
+            auto newMoveTime = std::chrono::duration<double>(0);
 
             for (int i = 0; i < tokens.size(); ++i)
             {
-                bool incdel = false;
+                bool total = true;
                 if (tokens[i][0] == '+' || tokens[i][0] == '-')
                 {
                     tokens[i].erase(0, 1);
-                    incdel = true;
+                    total = false;
                 }
                    
                 num = std::stoi(tokens[i], &pos);
@@ -85,10 +108,11 @@ namespace
                 if (!(mult = getMultiple(tokens[i], pos)))
                     return;
 
-                if (incdel)
-                    newMoveTime += std::chrono::milliseconds(num * mult);
-                else
-                    newMoveTime += std::chrono::milliseconds((int) num * mult / 41);
+                mult *= num;
+                if (total)
+                    mult /= 41;
+
+                newMoveTime += std::chrono::duration<double>(mult);
             }
             
             moveTime = newMoveTime;
@@ -119,6 +143,7 @@ namespace
 
     void go()
     {
+        std::cout << moveTime << std::endl;
         std::cout << engine.analyzePosition(moveTime) << std::endl;
     }
 }
