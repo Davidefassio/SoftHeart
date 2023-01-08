@@ -24,6 +24,11 @@ bool Engine::makeMove(const Vec2 move)
 	return m_currPosition.makeMove(move);
 }
 
+const Board& Engine::getBoard() const
+{
+	return m_currPosition;
+}
+
 // Analyze a position and return the best move.
 // It tries to return in totTime.
 // If totTime is <1s it is suggested to reduce sampleRuns to 200 or less.

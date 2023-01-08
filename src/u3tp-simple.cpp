@@ -10,6 +10,8 @@
 #include <regex>
 #include <chrono>
 
+#define DEBUG(x) std::cout << "# DEBUG: "<< x << std::endl;
+
 namespace
 {
     // Local variables
@@ -96,6 +98,8 @@ namespace
             
             moveTime = newMoveTime;
         }
+
+        DEBUG(moveTime)
     }
 
     void position(const std::string& position)
@@ -103,10 +107,15 @@ namespace
         Board board;
         if (board.set(position))
             engine.setBoard(board);
+
+        DEBUG("New position")
+        engine.getBoard().debugBoard();
     }
 
     void makemove(const std::string& move)
     {
+        DEBUG("Making move")
+
         // If right size try to convert
         if (move.size() == 2)
         {
@@ -122,9 +131,11 @@ namespace
 
     void go()
     {
+        DEBUG("Starting...")
         Timer t;
-        std::cout << engine.analyzePosition(moveTime) << " ";
-        t.total(true);
+        std::cout << engine.analyzePosition(moveTime) << std::endl;
+
+        DEBUG(Timer::durationInSeconds(t.total()))
     }
 }
 
@@ -149,16 +160,35 @@ void sh::U3tp::loop()
         {
             if(tokens[0] == "u3tp-simple")
             {
-                std::cout << "u3tp-simpleok" << std::endl;
-                beforeHandshake = false;
+                if (tokens.size() == 1)
+                {
+                    std::cout << "u3tp-simpleok" << std::endl;
+                    beforeHandshake = false;
+                }
             }
         }
         else
         {
-            if(tokens[0] == "setconstraint") setconstraint(tokens[1], tokens[2], tokens[3]);
-            else if(tokens[0] == "position") position(tokens[1]);
-            else if(tokens[0] == "move") makemove(tokens[1]);
-            else if(tokens[0] == "go") go();
+            if (tokens[0] == "setconstraint")
+            {
+                if(tokens.size() == 4)
+                    setconstraint(tokens[1], tokens[2], tokens[3]);
+            }
+            else if (tokens[0] == "position")
+            {
+                if (tokens.size() == 2)
+                    position(tokens[1]);
+            }
+            else if (tokens[0] == "move")
+            {
+                if (tokens.size() == 2)
+                    makemove(tokens[1]);
+            }
+            else if (tokens[0] == "go")
+            {
+                if (tokens.size() == 1)
+                    go();
+            }
         }
     }
 

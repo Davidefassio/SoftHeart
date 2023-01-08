@@ -42,6 +42,8 @@ public:
 	void setBoard(const Board&);
 	bool makeMove(const Vec2);
 
+	const Board& getBoard() const;
+
 	MoveScore analyzePosition(
 		std::chrono::duration<double> = std::chrono::seconds(5), 
 		int = 500);
