@@ -12,30 +12,51 @@ Board::Board()
 
 bool Board::set(const std::string& state)
 {
-	// Check string lenght (81 cells + space + turn + space + last move)
-	if (state.size() != 85)
+	// Check string lenght (81 cells + last move)
+	if (state.size() != 82)
 		return false;
 
-	// Check if the space is present
-	if (state[81] != ' ' || state[83] != ' ')
-		return false;
+	// Set the smallBoards
+	Vec2 cell;
+	int countX = 0, countO = 0;
+	for (int i = 0; i < 81; ++i)
+	{
+		cell = Utils::arrayToNestedGrid(i);
 
-	// Set the turn
-	if (state[82] == 'X')
+		if (state[i] == '.')
+		{
+			m_smallBoards[cell[0]][cell[1]] = 0;
+		}
+		else if (state[i] == 'X')
+		{
+			m_smallBoards[cell[0]][cell[1]] = 1;
+			++countX;
+		}
+		else if (state[i] == 'O')
+		{
+			m_smallBoards[cell[0]][cell[1]] = 2;
+			++countO;
+		}
+		else
+			return false;
+	}
+
+	// Set the turn (cross starts first)
+	if (countX == countO)
 		m_crossToMove = true;
-	else if (state[82] == 'O')
+	else if (countX == countO + 1)
 		m_crossToMove = false;
 	else
 		return false;
 
 	// Set last move
-	if (state[84] == '-')
+	if (state[81] == '-')
 	{
 		m_lastMoveSC = -1;
 	}
 	else
 	{
-		int sc = ((int)state[84]) - 48 - 1;
+		int sc = ((int)state[81]) - 48 - 1;
 
 		if (sc < 0 && sc > 8)
 			return false;
@@ -43,26 +64,10 @@ bool Board::set(const std::string& state)
 		m_lastMoveSC = sc;
 	}
 
-	// Set the smallBoards
-	Vec2 cell;
-	for (int i = 0; i < 81; ++i)
-	{
-		cell = Utils::arrayToNestedGrid(i);
-
-		if (state[i] == '.')
-			m_smallBoards[cell[0]][cell[1]] = 0;
-		else if (state[i] == 'X')
-			m_smallBoards[cell[0]][cell[1]] = 1;
-		else if (state[i] == 'O')
-			m_smallBoards[cell[0]][cell[1]] = 2;
-		else
-			return false;
-	}
-
 	// Compute the bigBoard from the smallBoards position
 	for (int i = 0; i < 9; ++i)
 		m_bigBoard = m_smallBoards[i].tris();
-		
+
 	return true;
 }
 

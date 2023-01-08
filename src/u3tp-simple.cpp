@@ -1,6 +1,7 @@
 #include "u3tp-simple.hpp"
 
 #include "Engine.hpp"
+#include "Timer.hpp"
 
 #include <cstdlib>
 #include <iostream>
@@ -16,28 +17,6 @@ namespace
     const std::regex ws_re("\\s+"); // whitespace
     bool beforeHandshake = true;
     std::chrono::duration<double> moveTime = std::chrono::seconds(5);
-
-    /*
-    int getMultiple(const std::string& str, std::size_t pos)
-    {
-        if (str.size() == pos + 1)
-        {
-            if (str[pos] == 's')
-                return 1000;
-            if (str[pos] == 'm')
-                return 60000;
-            if (str[pos] == 'h')
-                return 3600000;
-            if (str[pos] == 'd')
-                return 86400000;
-        }
-
-        if (str.size() == pos + 2 && str[pos] == 'm' && str[pos + 1] == 's')
-            return 1;
-
-        return 0;
-    }
-    */
 
     double getMultiple(const std::string& str, std::size_t pos)
     {
@@ -143,8 +122,9 @@ namespace
 
     void go()
     {
-        std::cout << moveTime << std::endl;
-        std::cout << engine.analyzePosition(moveTime) << std::endl;
+        Timer t;
+        std::cout << engine.analyzePosition(moveTime) << " ";
+        t.total(true);
     }
 }
 

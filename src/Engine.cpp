@@ -1,5 +1,7 @@
 #include "Engine.hpp"
 
+#include "Timer.hpp"
+
 #include <iostream>
 #include <limits>
 #include <cstdint>
@@ -41,7 +43,7 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 	Board moved(m_currPosition);
 	moved.makeMoveUnsafe(moves[0]);
 
-	auto start = std::chrono::steady_clock::now();
+	Timer timer;
 
 	for (int i = 0; i < sampleRuns; ++i)
 	{
@@ -49,7 +51,7 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 		count += playRandom(copy, buffer);
 	}
 
-	auto diff = std::chrono::steady_clock::now() - start;
+	auto diff = timer.total();
 
 	std::uint64_t playsPerMove = (sampleRuns * totTime) / (diff * moves_size);
 
