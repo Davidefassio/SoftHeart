@@ -179,5 +179,5 @@ void sh::U3tp::loop()
         }
     }
 
-    return;
+    return;  // never used
 }
