@@ -10,8 +10,6 @@
 #include <regex>
 #include <chrono>
 
-#define DEBUG(x) std::cout << "# DEBUG: "<< x << std::endl;
-
 namespace
 {
     // Local variables
@@ -98,8 +96,6 @@ namespace
             
             moveTime = newMoveTime;
         }
-
-        DEBUG(moveTime)
     }
 
     void position(const std::string& position)
@@ -107,15 +103,10 @@ namespace
         Board board;
         if (board.set(position))
             engine.setBoard(board);
-
-        DEBUG("New position")
-        engine.getBoard().debugBoard();
     }
 
     void makemove(const std::string& move)
     {
-        DEBUG("Making move")
-
         // If right size try to convert
         if (move.size() == 2)
         {
@@ -131,11 +122,7 @@ namespace
 
     void go()
     {
-        DEBUG("Starting...")
-        Timer t;
         std::cout << engine.analyzePosition(moveTime) << std::endl;
-
-        DEBUG(Timer::durationInSeconds(t.total()))
     }
 }
 

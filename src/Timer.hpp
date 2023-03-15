@@ -6,10 +6,8 @@ class Timer
 {
 public:
 	// Constructor
-	Timer()
+	Timer() : m_start(std::chrono::steady_clock::now()), m_lastSplit(m_start)
 	{
-		m_start = std::chrono::steady_clock::now();
-		m_lastSplit = m_start;
 	}
 
 	// Return the time elpsed from the previous call (or the start if it's the first call)

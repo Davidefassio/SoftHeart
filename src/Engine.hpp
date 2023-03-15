@@ -1,16 +1,15 @@
 #pragma once
 
+#include "Board.hpp"
+
 #include <random>
 #include <chrono>
-
-#include "Board.hpp"
 
 class MoveScore
 {
 public:
-	MoveScore()
+	MoveScore() : m_score(0.0f)
 	{
-		m_score = 0.0f;
 	}
 
 	MoveScore(Vec2 move, float score)
@@ -54,8 +53,6 @@ private:
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
 
 	void generateMoves(const Board&, Vec2*, int*);
-	void generateMovesShuffled(const Board&, Vec2*, int*);
-
 	int playRandom(Board&, Vec2*);
 
 	// Pick a random int in the range [0, size).

@@ -1,15 +1,9 @@
 #include "Engine.hpp"
-
 #include "Timer.hpp"
 
-#include <iostream>
 #include <limits>
 #include <cstdint>
-
-#include <array>
-#include <algorithm>
-
-//#define DEBUG_ENG
+#include <iostream>
 
 // Construct the engine and generate a random seed
 Engine::Engine()
@@ -63,10 +57,6 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 
 	std::uint64_t playsPerMove = (sampleRuns * totTime) / (diff * moves_size);
 
-#ifdef DEBUG_ENG
-	std::cout << "Plays per move = " << playsPerMove << "\n";
-#endif
-
 	for (std::uint64_t i = sampleRuns; i < playsPerMove; ++i)
 	{
 		Board copy(moved);
@@ -80,10 +70,6 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 		bestMS.m_score = score;
 		bestMS.m_move = moves[0];
 	}
-
-#ifdef DEBUG_ENG
-	std::cout << moves[0][0] + 1 << moves[0][1] + 1 << ": " << score * mask << "\n";
-#endif
 
 	// All other moves
 	for (int m = 1; m < moves_size; ++m)
@@ -106,10 +92,6 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 			bestMS.m_score = score;
 			bestMS.m_move = moves[m];
 		}
-
-#ifdef DEBUG_ENG
-		std::cout << moves[m][0] + 1 << moves[m][1] + 1 << ": " << score * mask << "\n";
-#endif
 	}
 
 	bestMS.m_score *= mask;
@@ -136,37 +118,6 @@ void Engine::generateMoves(const Board& board, Vec2* moves, int* cnt)
 				for (int j = 0; j < 9; ++j)
 					if (board.m_smallBoards[i][j] == 0)
 						moves[(*cnt)++] = Vec2(i, j);
-	}
-}
-
-// EXPERIMENTAL
-void Engine::generateMovesShuffled(const Board& board, Vec2* moves, int* cnt)
-{
-	*cnt = 0;
-
-	std::array<int, 9> r1{ 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-	std::shuffle(r1.begin(), r1.end(), this->m_gen);
-
-	if (board.m_lastMoveSC != -1)
-	{
-		for (int i : r1)
-			if (board.m_smallBoards[board.m_lastMoveSC][i] == 0)
-				moves[(*cnt)++] = Vec2(board.m_lastMoveSC, i);
-	}
-	else
-	{
-		std::array<int, 9> r2{ 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-
-		for (int i : r1)
-		{
-			if (board.m_bigBoard[i] == 0)
-			{
-				std::shuffle(r2.begin(), r2.end(), this->m_gen);
-				for (int j : r2)
-					if (board.m_smallBoards[i][j] == 0)
-						moves[(*cnt)++] = Vec2(i, j);
-			}
-		}
 	}
 }
 
@@ -197,6 +148,7 @@ int Engine::playRandom(Board& b, Vec2* moves)
 	}
 }
 
+// MoveScore
 // Override stream extraction operator
 std::ostream& operator<<(std::ostream& os, const MoveScore& ms)
 {

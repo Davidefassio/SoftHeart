@@ -116,7 +116,7 @@ public:
 	// Check if a not ended game can only end in a draw or can still be won
 	inline bool forcedDraw() const
 	{
-		if ((data[0] < 2 && data[1] < 2 && data[2] < 2) ||
+		return !((data[0] < 2 && data[1] < 2 && data[2] < 2) ||
 			(data[0] % 2 == 0 && data[1] % 2 == 0 && data[2] % 2 == 0) ||
 			(data[3] < 2 && data[4] < 2 && data[5] < 2) ||
 			(data[3] % 2 == 0 && data[4] % 2 == 0 && data[5] % 2 == 0) ||
@@ -131,10 +131,7 @@ public:
 			(data[0] < 2 && data[4] < 2 && data[8] < 2) ||
 			(data[0] % 2 == 0 && data[4] % 2 == 0 && data[8] % 2 == 0) ||
 			(data[2] < 2 && data[4] < 2 && data[6] < 2) ||
-			(data[2] % 2 == 0 && data[4] % 2 == 0 && data[6] % 2 == 0))
-			return false;
-
-		return true;
+			(data[2] % 2 == 0 && data[4] % 2 == 0 && data[6] % 2 == 0));
 	}
 
 	// Members
