@@ -7,8 +7,12 @@ project(SoftHeart)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# specify compiler flags
-set(CMAKE_CXX_FLAGS "-O3")
+# specify compiler options
+if (MSVC)
+    add_compile_options(/O2)
+else()
+    add_compile_options(-O3)
+endif()
 
 # add headers and executable
 include_directories(${PROJECT_SOURCE_DIR})
