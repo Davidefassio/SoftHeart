@@ -1,8 +1,8 @@
 #include "Board.hpp"
 
-#include <iostream>
-
 #include "Utils.hpp"
+
+#include <iostream>
 
 
 Board::Board()
@@ -129,10 +129,10 @@ bool Board::makeMove(const Vec2 move)
 
 void Board::makeMoveUnsafe(const Vec2 move)
 {
-	m_smallBoards[move[0]][move[1]] = 2 - ((int) m_crossToMove);
+	m_crossToMove = !m_crossToMove;
+	m_smallBoards[move[0]][move[1]] = 1 + ((int) m_crossToMove);
 	m_bigBoard[move[0]] = m_smallBoards[move[0]].tris();
 	m_lastMoveSC = (m_bigBoard[move[1]]) ? -1 : move[1];
-	m_crossToMove = !m_crossToMove;
 }
 
 int Board::checkEndGame() const

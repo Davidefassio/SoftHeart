@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Board.hpp"
+#include "Tree.hpp"
 
 #include <random>
 #include <chrono>
@@ -12,10 +13,8 @@ public:
 	{
 	}
 
-	MoveScore(Vec2 move, float score)
+	MoveScore(Vec2 move, float score): m_move(move), m_score(score)
 	{
-		m_move = move;
-		m_score = score;
 	}
 
 	// Override stream extraction operator
@@ -48,10 +47,15 @@ public:
 		int = 500);
 
 private:
+	Tree m_mcTree;
 	Board m_currPosition;
 	std::ranlux48_base m_gen;
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
 
+	bool create_childs(const Board&, Node*);
+	Node* bestChildByScore(const Node*);
+	Node* bestChildByPlays();
+	bool newRoot(const Vec2);
 	void generateMoves(const Board&, Vec2*, int*);
 	int playRandom(Board&, Vec2*);
 

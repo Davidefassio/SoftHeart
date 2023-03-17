@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Vec.hpp"
+
 #include <array>
 #include <string>
-
-#include "Vec.hpp"
 
 /*
 * Board cell state:

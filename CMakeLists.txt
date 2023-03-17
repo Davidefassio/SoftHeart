@@ -21,4 +21,5 @@ add_executable(SoftHeart
     src/main.cpp
     src/u3tp-simple.cpp
     src/Board.cpp
-    src/Engine.cpp)
+    src/Engine.cpp 
+    src/Tree.cpp)

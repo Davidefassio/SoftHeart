@@ -114,7 +114,7 @@ namespace
             int bc = ((int)move[0]) - 48 - 1;
             int sc = ((int)move[1]) - 48 - 1;
 
-            // If index if in range [0, 8] return move
+            // If index if in range [0, 8] apply move
             if (bc >= 0 && bc <= 8 && sc >= 0 && sc <= 8)
                 engine.makeMove(Vec2(bc, sc));
         }
@@ -143,6 +143,10 @@ void sh::U3tp::loop()
             return;  // Always quit
 
         // Before the handshake every command is ignored
+
+        // DEBUG
+        beforeHandshake = false;
+        ////////
         if(beforeHandshake)
         {
             if(tokens[0] == "u3tp-simple")

@@ -31,6 +31,16 @@ public:
 		return data[i];
 	}
 
+	friend inline bool operator==(const Vec2& lhs, const Vec2& rhs) 
+	{
+		return (lhs.data[0] == rhs.data[0]) && (lhs.data[1] == rhs.data[1]);
+	}
+
+	friend inline bool operator!=(const Vec2& lhs, const Vec2& rhs)
+	{
+		return (lhs.data[0] != rhs.data[0]) || (lhs.data[1] != rhs.data[1]);
+	}
+
 	inline void fill(const int n)
 	{
 		data[0] = data[1] = n;
