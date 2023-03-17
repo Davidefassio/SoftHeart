@@ -14,6 +14,8 @@ cmake ..
 cmake --build .
 ```
 
+On Windows you can also open the project with Visual Studio, it has CMake support.
+
 ## Usage
 
 The executable now is in the build folder and it's called `SoftHeart`.
