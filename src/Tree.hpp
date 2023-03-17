@@ -42,6 +42,7 @@ public:
 	Tree& operator=(Tree&&) = delete;
 
 	Node* fillFirstEmpty(const Node&);
+	void clear();
 	void eraseNode(Node*);
 	void eraseTree(Node*);
 	

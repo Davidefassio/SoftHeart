@@ -77,6 +77,16 @@ Node* Tree::fillFirstEmpty(const Node& node)
 	return nullptr;
 }
 
+void Tree::clear()
+{
+	// Zero the index table (# bytes = 8 * m_tableSize = m_tableSize << 3)
+	std::memset(m_table, 0, m_tableSize << 3);
+
+	// Setup the root (illegal move)
+	fillFirstEmpty(Node(Vec2(-1, -1)));
+	m_root = m_nodes;
+}
+
 void Tree::eraseTree(Node* base)
 {
 	if (base == nullptr) return;

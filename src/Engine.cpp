@@ -202,7 +202,6 @@ Node* Engine::bestChildByPlays()
 	return best;
 }
 
-// TODO: find best child, delete others, delete m_root, assign new m_root
 bool Engine::newRoot(const Vec2 move)
 {
 	// Find new root
