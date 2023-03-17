@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
-#include <numbers>
 #include <cmath>
 
 // Construct the engine with 1GiB of memory and generate a random seed
@@ -157,8 +156,8 @@ Node* Engine::bestChildByScore(const Node* father)
 		{
 			if (bestScore != -1.0)
 			{
-				score = (currNode->m_wins / (double) currNode->m_total) *
-					std::numbers::sqrt2 * std::sqrt(std::log(father->m_total) / currNode->m_total);
+				score = (currNode->m_wins / (double) currNode->m_total) +
+					explorationCoeff * std::sqrt(std::log(father->m_total) / currNode->m_total);
 
 				if (score >= bestScore)
 				{

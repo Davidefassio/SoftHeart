@@ -5,6 +5,7 @@
 
 #include <random>
 #include <chrono>
+#include <numbers>
 
 class MoveScore
 {
@@ -51,6 +52,12 @@ private:
 	Board m_currPosition;
 	std::ranlux48_base m_gen;
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
+
+	// Exploration coefficient:
+	// 0 = only exploitation
+	// sqrt2 = theoretical value
+	// inf = only exploration
+	static constexpr double explorationCoeff = std::numbers::sqrt2;
 
 	bool create_childs(const Board&, Node*);
 	Node* bestChildByScore(const Node*);
