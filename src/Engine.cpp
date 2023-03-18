@@ -214,47 +214,44 @@ Node* Engine::bestChildByPlays()
 
 bool Engine::newRoot(const Vec2 move)
 {
-	// Find new root
 	if (!m_mcTree.m_root->m_child)
 		return false;
 
-	Node* newRoot = nullptr;
 	Node* currNode = m_mcTree.m_root->m_child;
 
+	// Find new root
 	while (currNode)
 	{
 		if (currNode->m_move == move)
 		{
-			newRoot = currNode;
-			break;
+			// Found the correct node, set new root
+			Node* newRoot = currNode, *tmp;
+
+			// Delete other childs
+			currNode = m_mcTree.m_root->m_child;
+			while (currNode)
+			{
+				if (currNode->m_move != move)
+				{
+					tmp = currNode;
+					currNode = currNode->m_sibling;
+					m_mcTree.eraseTree(tmp);
+				}
+			}
+
+			// Delete old root
+			m_mcTree.eraseNode(m_mcTree.m_root);
+
+			// Assign new one
+			m_mcTree.m_root = newRoot;
+			m_mcTree.m_root->m_father = nullptr;
+			m_mcTree.m_root->m_sibling = nullptr;
+
+			return true;
 		}
 	}
 
-	if (!newRoot)
-		return false;
-
-	// Delete other childs
-	Node* tmp;
-	currNode = m_mcTree.m_root->m_child;
-	while (currNode)
-	{
-		if (currNode->m_move != move)
-		{
-			tmp = currNode;
-			currNode = currNode->m_sibling;
-			m_mcTree.eraseTree(tmp);
-		}
-	}
-
-	// Delete old root
-	m_mcTree.eraseNode(m_mcTree.m_root);
-
-	// Assign new one
-	m_mcTree.m_root = newRoot;
-	m_mcTree.m_root->m_father = nullptr;
-	m_mcTree.m_root->m_sibling = nullptr;
-
-	return true;
+	return false;
 }
 
 // Generate all possible moves from a position.
