@@ -47,9 +47,9 @@ public:
 	void eraseTree(Node*);
 	
 	Node* m_root;
-	Node* m_nodes;
 
 private:
+	Node* m_nodes;
 	std::uint64_t* m_table;
 	std::uint64_t m_tableSize;
 	std::uint64_t m_nodesSize;

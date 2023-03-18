@@ -14,14 +14,24 @@ Engine::Engine() : m_mcTree(1073741824)
 	m_gen.seed(std::random_device{}());
 }
 
+// Set the new board and clear the tree
 void Engine::setBoard(const Board& newBoard)
 {
 	m_currPosition = newBoard;
+	m_mcTree.clear();
 }
 
 bool Engine::makeMove(const Vec2 move)
 {
-	return m_currPosition.makeMove(move);
+	// If the move is legal make it
+	if (!m_currPosition.makeMove(move))
+		return false;
+
+	// If the move is a child of the root make it the new root, otherwise clear all
+	if (!newRoot(move))
+		m_mcTree.clear();
+
+	return true;
 }
 
 const Board& Engine::getBoard() const
