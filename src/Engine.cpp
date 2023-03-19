@@ -190,13 +190,13 @@ Node* Engine::bestChildByScore(const Node* father)
 	return bests[randInt(bests.size())];
 }
 
-Node* Engine::bestChildByPlays()
+Node* Engine::bestChildByPlays(const Node* father)
 {
-	if (!m_mcTree.m_root->m_child)
+	if (!father->m_child)
 		return nullptr;
 
 	Node* best = nullptr;
-	Node* currNode = m_mcTree.m_root->m_child;
+	Node* currNode = father->m_child;
 	std::uint64_t bestScore = -1;
 
 	while (currNode)
@@ -250,7 +250,6 @@ bool Engine::newRoot(const Vec2 move)
 			return true;
 		}
 	}
-
 	return false;
 }
 

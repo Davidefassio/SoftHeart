@@ -61,7 +61,7 @@ private:
 
 	bool create_childs(const Board&, Node*);
 	Node* bestChildByScore(const Node*);
-	Node* bestChildByPlays();
+	Node* bestChildByPlays(const Node*);
 	bool newRoot(const Vec2);
 	void generateMoves(const Board&, Vec2*, int*);
 	int playRandom(Board&, Vec2*);
