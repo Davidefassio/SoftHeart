@@ -19,6 +19,7 @@ public:
 	}
 
 	// Payload
+	// NOTE: wins and total are 2x, so wins can represents with integer the 0.5
 	std::uint64_t m_wins;
 	std::uint64_t m_total;
 	Vec2 m_move;

@@ -8,6 +8,12 @@
 #include <vector>
 #include <cmath>
 
+/*
+* TODO:
+* fix creatchildrend: in questo momento va constro cache
+* test test test
+*/
+
 // Construct the engine with 1GiB of memory and generate a random seed
 Engine::Engine() : m_mcTree(1073741824)
 {
@@ -39,6 +45,7 @@ const Board& Engine::getBoard() const
 	return m_currPosition;
 }
 
+/*
 // Analyze a position and return the best move.
 // It tries to return in totTime.
 // If totTime is <1s it is suggested to reduce sampleRuns to 200 or less.
@@ -110,6 +117,74 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime, int sam
 	bestMS.m_score *= mask;
 	return bestMS;
 }
+*/
+
+MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
+{
+	// Start timer
+	Timer t;
+
+	Board movingBoard(m_currPosition);
+	Node* currNode;
+	Vec2 moves[81];
+	int res;
+	bool crossToMove;
+
+	int cnt = 0;
+
+	// Cycle every round
+	while (t.total() < totTime)
+	//while(true)
+	{
+		movingBoard = m_currPosition;
+		currNode = m_mcTree.m_root;
+
+		// Cycly every layer
+		while (true)
+		{
+			if (currNode->m_child == nullptr)
+			{
+				if (currNode->m_total == 0)
+				{
+					// Play random
+					crossToMove = movingBoard.m_crossToMove;
+					res = playRandom(movingBoard, moves);
+					++cnt;
+
+					while (currNode != nullptr)
+					{
+						currNode->m_total += 2;
+
+						if (res == 0)
+							++(currNode->m_wins);
+						else if ((res == 1 && crossToMove) || (res == -1 && !crossToMove))
+							currNode->m_wins += 2;
+
+						crossToMove = !crossToMove;
+						currNode = currNode->m_father;
+					}
+
+					break;
+				}
+				else
+				{
+					create_childs(movingBoard, currNode);
+				}
+			}
+
+			currNode = bestChildByScore(currNode);
+			movingBoard.makeMoveUnsafe(currNode->m_move);
+		}
+	}
+
+	std::cout << Timer::durationInSeconds(t.total()) << std::endl;
+	std::cout << cnt << std::endl;
+
+	Node* bestChild = bestChildByPlays(m_mcTree.m_root);
+	if (!bestChild)
+		return MoveScore(Vec2(-1, -1), 0);
+	return MoveScore(bestChild->m_move, bestChild->m_wins / (float) bestChild->m_total);
+}
 
 // Generate and append to the tree all the possible child of the node
 // Return:
@@ -121,7 +196,7 @@ bool Engine::create_childs(const Board& board, Node* currNode)
 	{
 		for (int i = 0; i < 9; ++i)
 			if (board.m_smallBoards[board.m_lastMoveSC][i] == 0)
-				if(currNode->m_child = m_mcTree.fillFirstEmpty(Node(Vec2(board.m_lastMoveSC, i), currNode, currNode->m_child)))
+				if(!(currNode->m_child = m_mcTree.fillFirstEmpty(Node(Vec2(board.m_lastMoveSC, i), currNode, currNode->m_child))))
 					return false;
 	}
 	else
@@ -130,7 +205,7 @@ bool Engine::create_childs(const Board& board, Node* currNode)
 			if (board.m_bigBoard[i] == 0)
 				for (int j = 0; j < 9; ++j)
 					if (board.m_smallBoards[i][j] == 0)
-						if (currNode->m_child = m_mcTree.fillFirstEmpty(Node(Vec2(i, j), currNode, currNode->m_child)))
+						if (!(currNode->m_child = m_mcTree.fillFirstEmpty(Node(Vec2(i, j), currNode, currNode->m_child))))
 							return false;
 	}
 	return true;
@@ -167,7 +242,7 @@ Node* Engine::bestChildByScore(const Node* father)
 			if (bestScore != -1.0)
 			{
 				score = (currNode->m_wins / (double) currNode->m_total) +
-					explorationCoeff * std::sqrt(std::log(father->m_total) / currNode->m_total);
+					explorationCoeff * std::sqrt(std::log(father->m_total >> 1) / (currNode->m_total >> 1));
 
 				if (score >= bestScore)
 				{
@@ -195,9 +270,9 @@ Node* Engine::bestChildByPlays(const Node* father)
 	if (!father->m_child)
 		return nullptr;
 
-	Node* best = nullptr;
-	Node* currNode = father->m_child;
-	std::uint64_t bestScore = -1;
+	Node* best = father->m_child;
+	std::uint64_t bestScore = best->m_total;
+	Node* currNode = father->m_child->m_sibling;
 
 	while (currNode)
 	{

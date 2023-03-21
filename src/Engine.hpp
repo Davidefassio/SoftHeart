@@ -43,9 +43,10 @@ public:
 
 	const Board& getBoard() const;
 
-	MoveScore analyzePosition(
+	/*MoveScore analyzePosition(
 		std::chrono::duration<double> = std::chrono::seconds(5), 
-		int = 500);
+		int = 500);*/
+	MoveScore analyzePosition(std::chrono::duration<double> = std::chrono::seconds(5));
 
 private:
 	Tree m_mcTree;
