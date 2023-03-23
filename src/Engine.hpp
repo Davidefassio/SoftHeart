@@ -51,6 +51,8 @@ public:
 private:
 	Tree m_mcTree;
 	Board m_currPosition;
+	Node* nodeBuffer[81];
+	Vec2 moveBuffer[81];
 	std::ranlux48_base m_gen;
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
 
@@ -64,9 +66,13 @@ private:
 	Node* bestChildByScore(const Node*);
 	Node* bestChildByPlays(const Node*);
 	bool newRoot(const Vec2);
-	void generateMoves(const Board&, Vec2*, int*);
-	int playRandom(Board&, Vec2*);
+	void updateTree(Node*, int, bool);
+	void generateMoves(const Board&, int*);
+	int playRandom(Board&);
 
 	// Pick a random int in the range [0, size).
-	inline int randInt(int size) { return m_urd(m_gen) * size; }
+	inline int randInt(int size) 
+	{ 
+		return m_urd(m_gen) * size; 
+	}
 };
