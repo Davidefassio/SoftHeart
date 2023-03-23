@@ -57,11 +57,11 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 
 	int cnt = 0;
 
-	totTime = std::chrono::seconds(30);
+	totTime = std::chrono::seconds(5);
 
 	// Cycle every round
-	//while (t.total() < totTime)
-	while(true)
+	while (t.total() < totTime)
+	//while(true)
 	{
 		movingBoard = m_currPosition;
 		currNode = m_mcTree.m_root;
@@ -250,18 +250,16 @@ bool Engine::newRoot(const Vec2 move)
 		if (currNode->m_move == move)
 		{
 			// Found the correct node, set new root
-			Node* newRoot = currNode, *tmp;
+			Node* newRoot = currNode;
 
 			// Delete other childs
 			currNode = m_mcTree.m_root->m_child;
 			while (currNode)
 			{
 				if (currNode->m_move != move)
-				{
-					tmp = currNode;
-					currNode = currNode->m_sibling;
-					m_mcTree.eraseTree(tmp);
-				}
+					m_mcTree.eraseTree(currNode);
+
+				currNode = currNode->m_sibling;
 			}
 
 			// Delete old root
