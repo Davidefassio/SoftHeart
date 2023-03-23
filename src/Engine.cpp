@@ -10,10 +10,8 @@
 
 /*
 * TODO:
-* fix creatchildrend: in questo momento va constro cache
 * tree: add first iTable not full
 * tree: delete empty spaces in nodes table, pushing up all the nodes
-* engine: instance nodeBuffer(bestChildByScore)
 * test test test
 */
 
@@ -59,9 +57,11 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 
 	int cnt = 0;
 
+	totTime = std::chrono::seconds(30);
+
 	// Cycle every round
-	while (t.total() < totTime)
-	//while(true)
+	//while (t.total() < totTime)
+	while(true)
 	{
 		movingBoard = m_currPosition;
 		currNode = m_mcTree.m_root;
@@ -117,58 +117,84 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 // Return:
 //   true  = all child were created
 //   false = no room for all childs, # child created : [0, maxchilds)
-bool Engine::create_childs(const Board& board, Node* currNode)
+bool Engine::create_childs(const Board& board, Node* father)
 {
+	Node* prev = nullptr;
+	Node* curr = nullptr;
+
 	if (board.m_lastMoveSC != -1)
 	{
 		for (int i = 0; i < 9; ++i)
+		{
 			if (board.m_smallBoards[board.m_lastMoveSC][i] == 0)
-				if(!(currNode->m_child = m_mcTree.fillFirstEmpty(Node(Vec2(board.m_lastMoveSC, i), currNode, currNode->m_child))))
+			{
+				if (!(curr = m_mcTree.fillFirstEmpty(Node(Vec2(board.m_lastMoveSC, i), father))))
 					return false;
+
+				if (!father->m_child)
+					father->m_child = curr;
+				else
+					prev->m_sibling = curr;
+				prev = curr;
+			}
+		}
 	}
 	else
 	{
 		for (int i = 0; i < 9; ++i)
+		{
 			if (board.m_bigBoard[i] == 0)
+			{
 				for (int j = 0; j < 9; ++j)
+				{
 					if (board.m_smallBoards[i][j] == 0)
-						if (!(currNode->m_child = m_mcTree.fillFirstEmpty(Node(Vec2(i, j), currNode, currNode->m_child))))
+					{
+						if (!(curr = m_mcTree.fillFirstEmpty(Node(Vec2(i, j), father))))
 							return false;
+
+						if (!father->m_child)
+							father->m_child = curr;
+						else
+							prev->m_sibling = curr;
+						prev = curr;
+					}
+				}
+			}
+		}
 	}
 	return true;
 }
 
 Node* Engine::bestChildByScore(const Node* father)
 {
-	if (!father->m_child)
+	Node* currNode = father->m_child;
+	if (!currNode)
 		return nullptr;
 
-	std::vector<Node*> bests;
-	/*
-	* Score:
-	*	-2 = no prev child analyzed
-	*	-1 = the best has m_total = 0
-	*	otherwise score = m_wins / m_total + sqrt(2) * sqrt(ln(father->m_total) / m_total)
-	*/
-	double bestScore = -2.0, score;
+	Node* buffer[81];
 
-	Node* currNode = father->m_child;
+	// State:
+	// 0 total = 0
+	// 1 score > 0 : normal state
+	int state = 1, size;
+	double bestScore = -1.0, score;
+
 	while (currNode)
 	{
 		if (currNode->m_total == 0)
 		{
-			if (bestScore != -1.0)
+			if (state)
 			{
-				bestScore = -1.0;
-				bests.clear();
+				state = size = 0;
 			}
-			bests.push_back(currNode);
+
+			buffer[size++] = currNode;
 		}
 		else
 		{
-			if (bestScore != -1.0)
+			if (state)
 			{
-				score = (currNode->m_wins / (double) currNode->m_total) +
+				score = (currNode->m_wins / (double)currNode->m_total) +
 					explorationCoeff * std::sqrt(std::log(father->m_total >> 1) / (currNode->m_total >> 1));
 
 				if (score >= bestScore)
@@ -176,9 +202,9 @@ Node* Engine::bestChildByScore(const Node* father)
 					if (score > bestScore)
 					{
 						bestScore = score;
-						bests.clear();
+						size = 0;
 					}
-					bests.push_back(currNode);
+					buffer[size++] = currNode;
 				}
 			}
 		}
@@ -186,10 +212,10 @@ Node* Engine::bestChildByScore(const Node* father)
 		currNode = currNode->m_sibling;
 	}
 
-	if (bests.size() == 1)
-		return bests[0];
+	if (size == 1)
+		return buffer[0];
 
-	return bests[randInt(bests.size())];
+	return buffer[randInt(size)];
 }
 
 Node* Engine::bestChildByPlays(const Node* father)
@@ -198,9 +224,9 @@ Node* Engine::bestChildByPlays(const Node* father)
 		return nullptr;
 
 	Node* best = father->m_child;
+	Node* currNode = best->m_sibling;
 	std::uint64_t bestScore = best->m_total;
-	Node* currNode = father->m_child->m_sibling;
-
+	
 	while (currNode)
 	{
 		if (currNode->m_total > bestScore)
@@ -216,9 +242,6 @@ Node* Engine::bestChildByPlays(const Node* father)
 
 bool Engine::newRoot(const Vec2 move)
 {
-	if (!m_mcTree.m_root->m_child)
-		return false;
-
 	Node* currNode = m_mcTree.m_root->m_child;
 
 	// Find new root
@@ -251,13 +274,15 @@ bool Engine::newRoot(const Vec2 move)
 
 			return true;
 		}
+
+		currNode = currNode->m_sibling;
 	}
 	return false;
 }
 
 void Engine::updateTree(Node* currNode, const int res, bool crossToMove)
 {
-	while (currNode != nullptr)
+	while (currNode)
 	{
 		currNode->m_total += 2;
 
@@ -279,15 +304,15 @@ void Engine::updateTree(Node* currNode, const int res, bool crossToMove)
 // Generate all possible moves from a position.
 // The moves are stored in this->moveBuffer.
 // The number of moves generated is stored in int* cnt.
-void Engine::generateMoves(const Board& board, int* cnt)
+void Engine::generateMoves(const Board& board, Vec2* buffer, int& cnt)
 {
-	*cnt = 0;
+	cnt = 0;
 
 	if (board.m_lastMoveSC != -1)
 	{
 		for (int i = 0; i < 9; ++i)
 			if (board.m_smallBoards[board.m_lastMoveSC][i] == 0)
-				moveBuffer[(*cnt)++] = Vec2(board.m_lastMoveSC, i);
+				buffer[cnt++] = Vec2(board.m_lastMoveSC, i);
 	}
 	else
 	{
@@ -295,19 +320,20 @@ void Engine::generateMoves(const Board& board, int* cnt)
 			if (board.m_bigBoard[i] == 0)
 				for (int j = 0; j < 9; ++j)
 					if (board.m_smallBoards[i][j] == 0)
-						moveBuffer[(*cnt)++] = Vec2(i, j);
+						buffer[cnt++] = Vec2(i, j);
 	}
 }
 
 // Play a position randomly till the end and return the outcome.
 int Engine::playRandom(Board& b)
 {
+	Vec2 buffer[81];
 	int r, moves_size;
 	while (true)
 	{
-		generateMoves(b, &moves_size);
+		generateMoves(b, buffer, moves_size);
 
-		b.makeMoveUnsafe(moveBuffer[randInt(moves_size)]);
+		b.makeMoveUnsafe(buffer[randInt(moves_size)]);
 
 		if (r = b.checkEndGame())
 			return r;
