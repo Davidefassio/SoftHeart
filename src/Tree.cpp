@@ -1,6 +1,6 @@
 #include "Tree.hpp"
 
-#include <iostream>
+#include <stdexcept>
 #include <cstring>
 #include <cstdlib>
 #include <bit>
@@ -83,6 +83,7 @@ void Tree::clear()
 {
 	// Zero the index table (# bytes = 8 * m_tableSize = m_tableSize << 3)
 	std::memset(m_table, 0, m_tableSize << 3);
+	m_lastEmptyTable = 0;
 
 	// Setup the root (illegal move)
 	fillFirstEmpty(Node(Vec2(-1, -1)));
@@ -95,6 +96,8 @@ void Tree::eraseTree(Node* base)
 
 	eraseSubTree(base->m_child);
 	eraseNode(base);
+
+	m_lastEmptyTable = 0;
 }
 
 void Tree::eraseNode(Node* ptr)

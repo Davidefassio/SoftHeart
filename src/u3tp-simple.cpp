@@ -143,10 +143,6 @@ void sh::U3tp::loop()
             return;  // Always quit
 
         // Before the handshake every command is ignored
-
-        // DEBUG
-        beforeHandshake = false;
-        ////////
         if(beforeHandshake)
         {
             if(tokens[0] == "u3tp-simple")
@@ -183,5 +179,5 @@ void sh::U3tp::loop()
         }
     }
 
-    return;  // never used
+    return;  // Never used
 }
