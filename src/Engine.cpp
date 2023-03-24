@@ -10,8 +10,8 @@
 
 /*
 * TODO:
-* tree: add first iTable not full
-* tree: delete empty spaces in nodes table, pushing up all the nodes
+* (IDEA) tree: delete empty spaces in nodes table, pushing up all the nodes (at the end of newRoot)
+* vec: optimize tris and forcedDraw
 * test test test
 */
 
@@ -56,7 +56,6 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 	int res;
 
 	int cnt = 0;
-
 	totTime = std::chrono::seconds(5);
 
 	// Cycle every round
@@ -85,17 +84,12 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 
 			if (!currNode->m_child)
 			{
-				if (currNode->m_total == 0)
+				if (currNode->m_total == 0 || !create_childs(movingBoard, currNode))
 				{
 					++cnt;
-
 					// Play random and update all the nodes back the tree
 					updateTree(currNode, playRandom(movingBoard), movingBoard.m_crossToMove);
 					break;
-				}
-				else
-				{
-					create_childs(movingBoard, currNode);
 				}
 			}
 
@@ -269,6 +263,8 @@ bool Engine::newRoot(const Vec2 move)
 			m_mcTree.m_root = newRoot;
 			m_mcTree.m_root->m_father = nullptr;
 			m_mcTree.m_root->m_sibling = nullptr;
+
+			m_mcTree.m_lastEmptyTable = 0;
 
 			return true;
 		}

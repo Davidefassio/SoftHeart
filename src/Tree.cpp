@@ -49,8 +49,9 @@ Tree::Tree(const std::uint64_t memory)
 	m_table = (std::uint64_t*)calloc(m_tableSize, 64);
 	if (m_table == nullptr)
 		throw std::runtime_error("Failed to allocate the index table");
-
+	
 	// Setup the root (illegal move)
+	m_lastEmptyTable = 0;
 	fillFirstEmpty(Node(Vec2(-1, -1)));
 	m_root = m_nodes;
 }
@@ -63,17 +64,18 @@ Tree::~Tree()
 
 Node* Tree::fillFirstEmpty(const Node& node)
 {
-	for (std::uint64_t i = 0; i < m_tableSize; ++i)
+	for (std::uint64_t i = m_lastEmptyTable; i < m_tableSize; ++i)
 	{
 		if (m_table[i] != 0xFFFFFFFFFFFFFFFF)
 		{
+			m_lastEmptyTable = i;
 			int n = std::countl_one(m_table[i]);
 			m_table[i] |= two_powers[n];
 			m_nodes[(i << 6) + n] = node;
 			return &m_nodes[(i << 6) + n];
 		}
 	}
-
+	m_lastEmptyTable = m_tableSize;
 	return nullptr;
 }
 

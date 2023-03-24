@@ -48,6 +48,7 @@ public:
 	void eraseTree(Node*);
 	
 	Node* m_root;
+	std::uint64_t m_lastEmptyTable;
 
 private:
 	Node* m_nodes;
