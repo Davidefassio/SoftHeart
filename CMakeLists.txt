@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # specify compiler options
-# TODO: test use of fast fp math (/fp:fast , --ffast-math)
 if (MSVC)
     add_compile_options(/O2)
 else()
