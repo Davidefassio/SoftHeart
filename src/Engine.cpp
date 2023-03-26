@@ -204,7 +204,7 @@ Node* Engine::bestChildByPlays(const Node* father)
 
 	Node* best = father->m_child;
 	Node* currNode = best->m_sibling;
-	std::uint64_t bestScore = best->m_total;
+	std::int64_t bestScore = best->m_total;
 	
 	while (currNode)
 	{
@@ -265,7 +265,7 @@ void Engine::updateTree(Node* currNode, const int res, bool crossToMove)
 
 		if (res == 3)
 			++(currNode->m_wins);
-		else if ((res == 1 && crossToMove) || (res == 2 && !crossToMove))
+		else if ((res == 1 && !crossToMove) || (res == 2 && crossToMove))
 			currNode->m_wins += 2;
 
 		crossToMove = !crossToMove;
