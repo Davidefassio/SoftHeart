@@ -5,7 +5,6 @@
 #include <limits>
 #include <cstdint>
 #include <iostream>
-#include <vector>
 #include <cmath>
 
 // Construct the engine with 1GiB of memory and generate a random seed
@@ -152,40 +151,24 @@ Node* Engine::bestChildByScore(const Node* father)
 
 	Node* buffer[81];
 
-	// State:
-	// 0 total = 0
-	// 1 score > 0 : normal state
-	int state = 1, size;
-	double bestScore = -1.0, score;
+	int size;
+	double bestScore = std::numeric_limits<double>::lowest(), score;
 
 	while (currNode)
 	{
 		if (currNode->m_total == 0)
-		{
-			if (state)
-			{
-				state = size = 0;
-			}
-
-			buffer[size++] = currNode;
-		}
+			score = std::numeric_limits<double>::max();
 		else
-		{
-			if (state)
-			{
-				score = (currNode->m_wins / (double)currNode->m_total) +
-					explorationCoeff * std::sqrt(std::log(father->m_total >> 1) / (currNode->m_total >> 1));
+			score = (currNode->m_wins / (double)currNode->m_total) + explorationCoeff * std::sqrt(std::log(father->m_total >> 1) / (currNode->m_total >> 1));
 
-				if (score >= bestScore)
-				{
-					if (score > bestScore)
-					{
-						bestScore = score;
-						size = 0;
-					}
-					buffer[size++] = currNode;
-				}
+		if (score >= bestScore)
+		{
+			if (score > bestScore)
+			{
+				bestScore = score;
+				size = 0;
 			}
+			buffer[size++] = currNode;
 		}
 
 		currNode = currNode->m_sibling;
