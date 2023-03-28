@@ -69,7 +69,7 @@ private:
 	int playRandom(Board&);
 
 	// Pick a random int in the range [0, size).
-	inline int randInt(int size) 
+	inline int randInt(const int size) 
 	{ 
 		return m_urd(m_gen) * size; 
 	}
