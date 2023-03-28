@@ -46,6 +46,7 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 	Board movingBoard(m_currPosition);
 	Node* currNode;
 	int res;
+	bool tmp_crossToMove;
 
 	// Cycle every round
 	while (t.total() < totTime)
@@ -75,7 +76,8 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 				if (currNode->m_total == 0 || !create_childs(movingBoard, currNode))
 				{
 					// Play random and update all the nodes back the tree
-					updateTree(currNode, playRandom(movingBoard), movingBoard.m_crossToMove);
+					tmp_crossToMove = movingBoard.m_crossToMove;  // playRandom modifies movingBoard
+					updateTree(currNode, playRandom(movingBoard), tmp_crossToMove);
 					break;
 				}
 			}
@@ -153,13 +155,14 @@ Node* Engine::bestChildByScore(const Node* father)
 
 	int size;
 	double bestScore = std::numeric_limits<double>::lowest(), score;
+	const double fatherLog = 2 * (std::log2(father->m_total) - 1);
 
 	while (currNode)
 	{
 		if (currNode->m_total == 0)
 			score = std::numeric_limits<double>::max();
 		else
-			score = (currNode->m_wins / (double)currNode->m_total) + explorationCoeff * std::sqrt(std::log(father->m_total >> 1) / (currNode->m_total >> 1));
+			score = (currNode->m_wins / (double)currNode->m_total) + explorationCoeff * std::sqrt(fatherLog / currNode->m_total);
 
 		if (score >= bestScore)
 		{
@@ -180,7 +183,7 @@ Node* Engine::bestChildByScore(const Node* father)
 	return buffer[randInt(size)];
 }
 
-Node* Engine::bestChildByPlays(const Node* father)
+Node* Engine::bestChildByPlays(const Node* father) const
 {
 	if (!father->m_child)
 		return nullptr;
@@ -199,6 +202,29 @@ Node* Engine::bestChildByPlays(const Node* father)
 		currNode = currNode->m_sibling;
 	}
 	
+	return best;
+}
+
+Node* Engine::bestChildByWins(const Node* father) const
+{
+	if (!father->m_child)
+		return nullptr;
+
+	Node* best = father->m_child;
+	Node* currNode = best->m_sibling;
+	double bestScore = best->m_wins / (double)best->m_total, score;
+
+	while (currNode)
+	{
+		score = currNode->m_wins / (double)currNode->m_total;
+		if (score > bestScore)
+		{
+			best = currNode;
+			bestScore = score;
+		}
+		currNode = currNode->m_sibling;
+	}
+
 	return best;
 }
 
@@ -259,7 +285,7 @@ void Engine::updateTree(Node* currNode, const int res, bool crossToMove)
 // Generate all possible moves from a position.
 // The moves are stored in this->moveBuffer.
 // The number of moves generated is stored in int* cnt.
-void Engine::generateMoves(const Board& board, Vec2* buffer, int& cnt)
+void Engine::generateMoves(const Board& board, Vec2* buffer, int& cnt) const
 {
 	cnt = 0;
 

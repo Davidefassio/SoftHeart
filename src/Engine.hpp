@@ -5,7 +5,6 @@
 
 #include <random>
 #include <chrono>
-#include <numbers>
 
 class MoveScore
 {
@@ -52,17 +51,21 @@ private:
 	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
 
 	// Exploration coefficient:
-	// 0 = only exploitation
-	// sqrt2 = theoretical value
-	// inf = only exploration
-	static constexpr double explorationCoeff = std::numbers::sqrt2;
+	//   0 = only exploitation
+	//   sqrt2 (~ 1.41) = theoretical value
+	//   inf = only exploration
+	static constexpr double explorationCoeff = 1.41;
 
 	bool create_childs(const Board&, Node*);
+
 	Node* bestChildByScore(const Node*);
-	Node* bestChildByPlays(const Node*);
+	Node* bestChildByPlays(const Node*) const;
+	Node* bestChildByWins(const Node*) const;
+
 	bool newRoot(const Vec2);
-	void updateTree(Node*, int, bool);
-	void generateMoves(const Board&, Vec2*, int&);
+	void updateTree(Node*, const int, bool);
+
+	void generateMoves(const Board&, Vec2*, int&) const;
 	int playRandom(Board&);
 
 	// Pick a random int in the range [0, size).
