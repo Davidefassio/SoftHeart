@@ -2,8 +2,8 @@
 
 #include "Board.hpp"
 #include "Tree.hpp"
+#include "FastRandom.hpp"
 
-#include <random>
 #include <chrono>
 
 class MoveScore
@@ -13,7 +13,7 @@ public:
 	{
 	}
 
-	MoveScore(Vec2 move, float score): m_move(move), m_score(score)
+	MoveScore(Vec2 move, float score) : m_move(move), m_score(score)
 	{
 	}
 
@@ -35,7 +35,10 @@ public:
 class Engine
 {
 public:
-	Engine();
+	// Construct the engine with 1GiB of memory
+	Engine() : m_mcTree(1073741824)
+	{
+	}
 
 	void setBoard(const Board&);
 	bool makeMove(const Vec2);
@@ -47,8 +50,7 @@ public:
 private:
 	Tree m_mcTree;
 	Board m_currPosition;
-	std::ranlux48_base m_gen;
-	std::uniform_real_distribution<> m_urd;  // Default values are 0.0, 1.0
+	sh::XorShift<> m_gen;
 
 	// Exploration coefficient:
 	//   0 = only exploitation
@@ -67,10 +69,4 @@ private:
 
 	void generateMoves(const Board&, Vec2*, int&) const;
 	int playRandom(Board&);
-
-	// Pick a random int in the range [0, size).
-	inline int randInt(const int size) 
-	{ 
-		return m_urd(m_gen) * size; 
-	}
 };

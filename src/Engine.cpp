@@ -7,12 +7,6 @@
 #include <iostream>
 #include <cmath>
 
-// Construct the engine with 1GiB of memory and generate a random seed
-Engine::Engine() : m_mcTree(1073741824)
-{
-	m_gen.seed(std::random_device{}());
-}
-
 // Set the new board and clear the tree
 void Engine::setBoard(const Board& newBoard)
 {
@@ -90,7 +84,7 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 	Node* bestChild = bestChildByPlays(m_mcTree.m_root);
 	if (!bestChild)
 		return MoveScore(Vec2(-1, -1), 0);
-	return MoveScore(bestChild->m_move, bestChild->m_wins / (float) bestChild->m_total);
+	return MoveScore(bestChild->m_move, bestChild->m_wins / (float)bestChild->m_total);
 }
 
 // Generate and append to the tree all the possible child of the node
@@ -180,7 +174,7 @@ Node* Engine::bestChildByScore(const Node* father)
 	if (size == 1)
 		return buffer[0];
 
-	return buffer[randInt(size)];
+	return buffer[m_gen.generateInt(size)];
 }
 
 Node* Engine::bestChildByPlays(const Node* father) const
@@ -191,7 +185,7 @@ Node* Engine::bestChildByPlays(const Node* father) const
 	Node* best = father->m_child;
 	Node* currNode = best->m_sibling;
 	std::int64_t bestScore = best->m_total;
-	
+
 	while (currNode)
 	{
 		if (currNode->m_total > bestScore)
@@ -201,7 +195,7 @@ Node* Engine::bestChildByPlays(const Node* father) const
 		}
 		currNode = currNode->m_sibling;
 	}
-	
+
 	return best;
 }
 
@@ -314,12 +308,12 @@ int Engine::playRandom(Board& b)
 	{
 		generateMoves(b, buffer, moves_size);
 
-		b.makeMoveUnsafe(buffer[randInt(moves_size)]);
+		b.makeMoveUnsafe(buffer[m_gen.generateInt(moves_size)]);
 
 		if (r = b.checkEndGame())
 			return r;
 		else if (b.checkForcedDraw())
-				return 3;
+			return 3;
 	}
 }
 
