@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstring>
+
 class Vec2
 {
 public:
@@ -56,12 +58,12 @@ public:
 	// Constructors
 	Vec9()
 	{
-		data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = data[7] = data[8] = 0;
+		fill(0);
 	}
 
 	Vec9(const int n)
 	{
-		data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = data[7] = data[8] = n;
+		fill(n);
 	}
 
 	Vec9(const int a, const int b, const int c, const int d, const int e,
@@ -92,6 +94,10 @@ public:
 	inline void fill(const int n)
 	{
 		data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = data[7] = data[8] = n;
+		
+		// Memset copia solo il primo byte di n, quindi e' un bug se sizeof(data[0]) > 1
+		// Se utilizzo std::int8_t data[9], allora memset e' perfetto
+		//std::memset(this, &n, 9);
 	}
 
 	// Check if there is a tris
