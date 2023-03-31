@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # specify compiler options
-# On Windows the architecture must be set explicitly, if in doubt remove the flag /arch
 if (MSVC)
+    # On Windows the architecture must be set explicitly, if in doubt remove the flag /arch
     add_compile_options(/O2 /GL /arch:AVX2)
 else()
     add_compile_options(-O3 -flto -march=native)
