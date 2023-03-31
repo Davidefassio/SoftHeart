@@ -9,9 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # specify compiler options
 if (MSVC)
-    add_compile_options(/O2)
+    add_compile_options(/O2 /GL)
 else()
-    add_compile_options(-O3)
+    add_compile_options(-O3 -flto)
 endif()
 
 # add headers and executable
