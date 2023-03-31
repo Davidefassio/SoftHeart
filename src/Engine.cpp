@@ -42,11 +42,16 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 	int res;
 	bool tmp_crossToMove;
 
+	totTime = std::chrono::seconds(20);
+
+	int cnt = 0;
+
 	// Cycle every round
 	while (t.total() < totTime)
 	{
 		movingBoard = m_currPosition;
 		currNode = m_mcTree.m_root;
+		++cnt;
 
 		// Cycle every layer
 		while (true)
@@ -80,6 +85,8 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 			movingBoard.makeMoveUnsafe(currNode->m_move);
 		}
 	}
+
+	std::cout << cnt << std::endl;
 
 	Node* bestChild = bestChildByPlays(m_mcTree.m_root);
 	if (!bestChild)
