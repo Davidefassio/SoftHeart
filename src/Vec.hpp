@@ -128,22 +128,16 @@ public:
 	// Check if a not ended game can only end in a draw or can still be won
 	inline bool forcedDraw() const
 	{
-		return !((data[0] < 2 && data[1] < 2 && data[2] < 2) ||
-			(data[0] % 2 == 0 && data[1] % 2 == 0 && data[2] % 2 == 0) ||
-			(data[3] < 2 && data[4] < 2 && data[5] < 2) ||
-			(data[3] % 2 == 0 && data[4] % 2 == 0 && data[5] % 2 == 0) ||
-			(data[6] < 2 && data[7] < 2 && data[8] < 2) ||
-			(data[6] % 2 == 0 && data[7] % 2 == 0 && data[8] % 2 == 0) ||
-			(data[0] < 2 && data[3] < 2 && data[6] < 2) ||
-			(data[0] % 2 == 0 && data[3] % 2 == 0 && data[6] % 2 == 0) ||
-			(data[1] < 2 && data[4] < 2 && data[7] < 2) ||
-			(data[1] % 2 == 0 && data[4] % 2 == 0 && data[7] % 2 == 0) ||
-			(data[2] < 2 && data[5] < 2 && data[8] < 2) ||
-			(data[2] % 2 == 0 && data[5] % 2 == 0 && data[8] % 2 == 0) ||
-			(data[0] < 2 && data[4] < 2 && data[8] < 2) ||
-			(data[0] % 2 == 0 && data[4] % 2 == 0 && data[8] % 2 == 0) ||
-			(data[2] < 2 && data[4] < 2 && data[6] < 2) ||
-			(data[2] % 2 == 0 && data[4] % 2 == 0 && data[6] % 2 == 0));
+		int i = ((data[0] < 2) << 2) | ((data[1] < 2) << 1) | ((data[2] < 2) << 0);
+		int j = ((data[3] < 2) << 5) | ((data[4] < 2) << 4) | ((data[5] < 2) << 3) |
+			((data[6] < 2) << 2) | ((data[7] < 2) << 1) | ((data[8] < 2) << 0);
+		if ((Vec9::lut[i] >> j) & 1)
+			return false;
+
+		i = ((!(data[0] & 1)) << 2) | ((!(data[1] & 1)) << 1) | ((!(data[2] & 1)) << 0);
+		j = ((!(data[3] & 1)) << 5) | ((!(data[4] & 1)) << 4) | ((!(data[5] & 1)) << 3) |
+			((!(data[6] & 1)) << 2) | ((!(data[7] & 1)) << 1) | ((!(data[8] & 1)) << 0);
+		return !((Vec9::lut[i] >> j) & 1);
 	}
 
 	// Members
