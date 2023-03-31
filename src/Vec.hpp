@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstring>
+#include <cstdint>
+#include <iostream>
 
 class Vec2
 {
@@ -103,23 +105,17 @@ public:
 	// Check if there is a tris
 	inline int tris() const
 	{
-		// Return 1 or 2 if there is a tris on board (win)
-		if ((data[4] == 1 || data[4] == 2) &&
-			((data[4] == data[3] && data[4] == data[5]) ||
-			 (data[4] == data[1] && data[4] == data[7]) ||
-			 (data[4] == data[0] && data[4] == data[8]) ||
-			 (data[4] == data[2] && data[4] == data[6])))
-			return data[4];
+		int i = ((data[0] == 1) << 2) | ((data[1] == 1) << 1) | ((data[2] == 1) << 0);
+		int j = ((data[3] == 1) << 5) | ((data[4] == 1) << 4) | ((data[5] == 1) << 3) |
+				((data[6] == 1) << 2) | ((data[7] == 1) << 1) | ((data[8] == 1) << 0);
+		if ((Vec9::lut[i] >> j) & 1)
+			return 1;
 
-		if ((data[0] == 1 || data[0] == 2) &&
-			((data[0] == data[1] && data[0] == data[2]) ||
-			 (data[0] == data[3] && data[0] == data[6])))
-			return data[0];
-
-		if ((data[8] == 1 || data[8] == 2) &&
-			((data[8] == data[6] && data[8] == data[7]) ||
-			 (data[8] == data[2] && data[8] == data[5])))
-			return data[8];
+		i = ((data[0] == 2) << 2) | ((data[1] == 2) << 1) | ((data[2] == 2) << 0);
+		j = ((data[3] == 2) << 5) | ((data[4] == 2) << 4) | ((data[5] == 2) << 3) |
+			((data[6] == 2) << 2) | ((data[7] == 2) << 1) | ((data[8] == 2) << 0);
+		if ((Vec9::lut[i] >> j) & 1)
+			return 2;
 
 		// Return 0 if there is still space (not decided yet)
 		if (!(data[0] && data[1] && data[2] && data[3] && data[4] && data[5] && data[6] && data[7] && data[8]))
@@ -128,7 +124,7 @@ public:
 		// Return 3 if the board if full and no tris found (draw)
 		return 3;
 	}
-
+	
 	// Check if a not ended game can only end in a draw or can still be won
 	inline bool forcedDraw() const
 	{
@@ -152,4 +148,15 @@ public:
 
 	// Members
 	int data[9];
+
+private:
+	static constexpr std::uint64_t lut[8] = {
+		0xff80808080808080,
+		0xfff0aa80faf0aa80,
+		0xffcc8080cccc8080,
+		0xfffcaa80fefcaa80,
+		0xfffaf0f0aaaa8080,
+		0xfffafaf0fafaaa80,
+		0xfffef0f0eeee8080,
+		0xffffffffffffffff };
 };
