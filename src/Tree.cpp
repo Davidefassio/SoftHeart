@@ -64,12 +64,17 @@ Tree::~Tree()
 
 Node* Tree::fillFirstEmpty(const Node& node)
 {
+	int n;
 	for (std::uint64_t i = m_lastEmptyTable; i < m_tableSize; ++i)
 	{
 		if (m_table[i] != 0xFFFFFFFFFFFFFFFF)
 		{
 			m_lastEmptyTable = i;
-			int n = std::countl_one(m_table[i]);
+
+			// If the compiler doesn't recognize std::countl_one replace with:
+			n = __builtin_clzll(~m_table[i]);
+			// n = std::countl_one(m_table[i]);
+
 			m_table[i] |= two_powers[n];
 			m_nodes[(i << 6) + n] = node;
 			return &m_nodes[(i << 6) + n];

@@ -52,7 +52,7 @@ MoveScore Engine::analyzePosition(std::chrono::duration<double> totTime)
 		while (true)
 		{
 			// If the game is ended handle it
-			if (res = movingBoard.checkEndGame())
+			if ((res = movingBoard.checkEndGame()))
 			{
 				updateTree(currNode, res, movingBoard.m_crossToMove);
 				break;
@@ -310,7 +310,7 @@ int Engine::playRandom(Board& b)
 
 		b.makeMoveUnsafe(buffer[m_gen.generateInt(moves_size)]);
 
-		if (r = b.checkEndGame())
+		if ((r = b.checkEndGame()))
 			return r;
 		else if (b.checkForcedDraw())
 			return 3;
