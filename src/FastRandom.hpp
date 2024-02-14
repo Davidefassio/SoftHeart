@@ -27,6 +27,8 @@ namespace sh
 			return state;
 		}
 
+		// This function is slightly skewed towards smaller numbers,
+		// but for max <<< uint64_t::max() is negligible.
 		inline std::int32_t generateInt(const std::int32_t max)
 		{
 			return (*this)() % max;
