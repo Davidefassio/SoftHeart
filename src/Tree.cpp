@@ -72,8 +72,8 @@ Node* Tree::fillFirstEmpty(const Node& node)
 			m_lastEmptyTable = i;
 
 			// If the compiler doesn't recognize std::countl_one replace with:
-			n = __builtin_clzll(~m_table[i]);
-			// n = std::countl_one(m_table[i]);
+			// n = __builtin_clzll(~m_table[i]);
+			n = std::countl_one(m_table[i]);
 
 			m_table[i] |= two_powers[n];
 			m_nodes[(i << 6) + n] = node;
@@ -110,7 +110,7 @@ void Tree::eraseNode(Node* ptr)
 	if (ptr < m_nodes) return;
 
 	auto [iTable, nTable] = std::lldiv(ptr - m_nodes, 64);
-	if (iTable >= m_tableSize) return;
+	if (static_cast<std::uint64_t>(iTable) >= m_tableSize) return;
 
 	m_table[iTable] &= (~two_powers[nTable]);
 }

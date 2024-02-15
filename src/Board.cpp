@@ -73,7 +73,7 @@ bool Board::set(const std::string& state)
 void Board::reset()
 {
 	m_bigBoard.fill(0);
-	for (int i = 0; i < m_smallBoards.size(); ++i)
+	for (std::uint8_t i = 0; i < m_smallBoards.size(); ++i)
 		m_smallBoards[i].fill(0);
 	m_crossToMove = true;
 	m_lastMoveSC = -1;

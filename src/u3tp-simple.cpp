@@ -61,7 +61,7 @@ namespace
             std::vector<std::string> tokens;
             int oldPos = 0;
 
-            for (int i = 0; i < format.size(); ++i)
+            for (std::size_t i = 0; i < format.size(); ++i)
             {
                 if (format[i] == '+' || format[i] == '-')
                 {
@@ -73,7 +73,7 @@ namespace
 
             auto newMoveTime = std::chrono::duration<double>(0);
 
-            for (int i = 0; i < tokens.size(); ++i)
+            for (std::size_t i = 0; i < tokens.size(); ++i)
             {
                 bool total = true;
                 if (tokens[i][0] == '+' || tokens[i][0] == '-')

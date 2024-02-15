@@ -7,12 +7,14 @@ project(SoftHeart)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# specify compiler options
-if (MSVC)
-    # On Windows the architecture must be set explicitly, if in doubt remove the flag /arch
-    add_compile_options(/O2 /GL /arch:AVX2)
-else()
-    add_compile_options(-O3 -flto -march=native)
+# specify compiler options only for release builds
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    if (MSVC)
+        # On Windows the architecture must be set explicitly, if in doubt remove the flag /arch
+        add_compile_options(/O2 /GL /arch:AVX2)
+    else()
+        add_compile_options(-O3 -flto -march=native)
+    endif()
 endif()
 
 # add headers and executable
