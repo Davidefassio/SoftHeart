@@ -35,6 +35,10 @@
 .vscode/*
 /.vs
 
-# build folder
+# build folders
 build/*
-/out/build/x64-Debug
+Build*
+Debug/*
+debug/*
+Release/*
+release/*
