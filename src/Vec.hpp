@@ -139,7 +139,7 @@ public:
 		if (!(data[0] && data[1] && data[2] && data[3] && data[4] && data[5] && data[6] && data[7] && data[8]))
 			return 0;
 
-		// Return 3 if the board if full and no tris found (draw)
+		// Return 3 if the board is full and no tris found (draw)
 		return 3;
 	}
 	
