@@ -37,7 +37,7 @@
 
 # build folders
 build/*
-Build*
+Build/*
 Debug/*
 debug/*
 Release/*
