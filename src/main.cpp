@@ -35,8 +35,10 @@ Debug: TODO
 Release: TODO
 
  - CLANG
-Debug: TODO
-Release: TODO
+Debug:
+clang++ -std=c++2a -g -o SoftHeart_debug ../src/main.cpp ../src/u3tp-simple.cpp ../src/Board.cpp ../src/Engine.cpp ../src/Tree.cpp
+Release:
+clang++ -std=c++2a -O2 -DNDEBUG -flto -march=native -o SoftHeart ../src/main.cpp ../src/u3tp-simple.cpp ../src/Board.cpp ../src/Engine.cpp ../src/Tree.cpp
 
  - MSVC
 Debug: 
